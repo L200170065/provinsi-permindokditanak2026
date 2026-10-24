@@ -1,41 +1,97 @@
 <!doctype html>
 <html lang="id">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#14532d">
-  <title>Permintaan Data Daerah AMPK — Provinsi</title>
-  <style>
-    * { box-sizing: border-box; }
-    html, body { margin: 0; width: 100%; min-height: 100%; background: #f2f8f3; }
-    body { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
-    .loading {
-      min-height: 100vh; display: grid; place-content: center; text-align: center;
-      padding: 24px; color: #214532; gap: 10px;
-    }
-    .spinner {
-      width: 32px; height: 32px; margin: 0 auto; border: 3px solid #d6eadb;
-      border-top-color: #16803d; border-radius: 50%; animation: spin .8s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    iframe { display: block; width: 100%; height: 100vh; height: 100dvh; min-height: 640px; border: 0; background: #f2f8f3; }
-    @media (max-width: 600px) { iframe { min-height: 100vh; min-height: 100dvh; } }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#14532d">
+<title>Permintaan Data Daerah AMPK — Provinsi</title>
+<style>
+:root{--green:#14532d;--green2:#16803d;--mint:#d6eadb;--ink:#214532;--muted:#6f8978}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink)}
+body{overflow:hidden;background:radial-gradient(ellipse at 50% 35%,#fff 0%,#f6fbf6 48%,#e8f4eb 100%)}
+.loading-page{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;z-index:5;background:radial-gradient(ellipse at 50% 35%,#fff 0%,#f6fbf6 48%,#e8f4eb 100%);transition:opacity .35s ease,visibility .35s ease}
+.loading-page.hide{opacity:0;visibility:hidden;pointer-events:none}
+.glow{position:absolute;width:420px;height:420px;border-radius:50%;background:#bde8c966;filter:blur(4px);top:50%;left:50%;transform:translate(-50%,-58%);z-index:-1}
+.card{width:min(100%,520px);text-align:center;padding:36px 32px 28px;border:1px solid #ffffffdf;border-radius:28px;background:#ffffffd4;box-shadow:0 28px 80px #14532d12,0 3px 12px #14532d08;backdrop-filter:blur(16px)}
+.brand{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:28px;text-align:left}
+.logo{width:48px;height:48px;display:grid;place-items:center;background:linear-gradient(145deg,#fff,#eef8f0);border:1px solid #dceee0;border-radius:15px;overflow:hidden;flex-shrink:0}
+.logo img{width:100%;height:100%;object-fit:contain;padding:3px}
+.brand-name{font-size:12px;font-weight:800;line-height:1.4;color:#14532d;letter-spacing:.015em}
+.brand-sub{font-size:11px;color:#718b79;margin-top:3px}
+.spinner-wrap{width:76px;height:76px;margin:0 auto 23px;position:relative;display:grid;place-items:center}
+.spinner{width:68px;height:68px;border:5px solid #d6eadb;border-top-color:#16803d;border-right-color:#57b875;border-radius:50%;animation:spin .9s linear infinite}
+.spinner-core{position:absolute;width:30px;height:30px;border-radius:10px;background:linear-gradient(145deg,#16803d,#14532d);display:grid;place-items:center;box-shadow:0 6px 16px #16803d35}
+.spinner-core svg{width:17px;height:17px;stroke:#fff}
+h1{font-size:clamp(23px,4vw,29px);letter-spacing:-.035em;line-height:1.2;margin:0 0 11px;font-weight:800;color:#214532}
+.desc{font-size:14px;line-height:1.7;color:#6f8978;margin:0 auto;max-width:370px}
+.progress{height:5px;background:#e4f0e6;border-radius:99px;overflow:hidden;margin:25px auto 13px;max-width:290px}
+.progress span{display:block;height:100%;width:38%;border-radius:99px;background:linear-gradient(90deg,#16803d,#7dcf91);animation:travel 1.8s ease-in-out infinite}
+.status{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#267548}
+.foot{font-size:11px;line-height:1.6;color:#91a699;margin-top:25px}
+.dots:after{content:"";display:inline-block;width:18px;text-align:left;animation:dots 1.4s steps(4,end) infinite}
+.app-frame{position:fixed;inset:0;width:100%;height:100%;border:0;background:#f6fbf6;z-index:1}
+.fallback{display:none;position:fixed;z-index:10;inset:0;background:#f4faf5;align-items:center;justify-content:center;padding:24px}
+.fallback-card{width:min(100%,440px);background:#fff;border:1px solid #dceee0;border-radius:22px;padding:28px;text-align:center;box-shadow:0 20px 55px #14532d12}
+.fallback-card h2{margin:0 0 10px;color:#14532d;font-size:22px}.fallback-card p{color:#718b79;font-size:14px;line-height:1.7}
+.btn{border:0;border-radius:11px;background:linear-gradient(110deg,#166534,#16803d);color:#fff;padding:12px 17px;font-size:14px;font-weight:800;cursor:pointer}
+.fallback-card a{color:#16803d;font-weight:700}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes travel{0%{transform:translateX(-120%)}100%{transform:translateX(360%)}}
+@keyframes dots{0%{content:""}25%{content:"."}50%{content:".."}75%,100%{content:"..."}}
+@media(max-width:480px){.card{padding:30px 22px 24px;border-radius:23px}.brand{margin-bottom:25px}.spinner-wrap{margin-bottom:20px}.foot{margin-top:22px}}
+@media(prefers-reduced-motion:reduce){.spinner,.progress span{animation-duration:3s}}
+</style>
 </head>
 <body>
-  <div class="loading" id="loading" role="status">
-    <div class="spinner" aria-hidden="true"></div>
-    <strong>Memuat Aplikasi Permintaan Data Daerah AMPK…</strong>
-    <span>Mohon tunggu sebentar.</span>
+<section class="loading-page" id="loading" aria-live="polite">
+  <div class="glow"></div>
+  <div class="card">
+    <div class="brand">
+      <div class="logo"><img src="https://lh3.googleusercontent.com/d/1aSj51L0F0b7YbY4wPunrYgYgpuOZJUlW" alt="Logo Direktorat Rehabilitasi Sosial Anak" onerror="this.style.display='none'"></div>
+      <div><div class="brand-name">DIREKTORAT REHABILITASI SOSIAL ANAK</div><div class="brand-sub">Kementerian Sosial Republik Indonesia</div></div>
+    </div>
+    <div class="spinner-wrap" aria-hidden="true">
+      <div class="spinner"></div>
+      <div class="spinner-core"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V7l8-4 8 4v13M2 20h20M8 10h2m4 0h2m-8 4h2m4 0h2"/></svg></div>
+    </div>
+    <h1>Menyiapkan Formulir AMPK</h1>
+    <p class="desc">Mohon tunggu sebentar. Aplikasi Permintaan Data Daerah AMPK Provinsi sedang disiapkan untuk Anda.</p>
+    <div class="progress" role="progressbar" aria-label="Aplikasi sedang dimuat"><span></span></div>
+    <div class="status">Menghubungkan ke sistem<span class="dots"></span></div>
+    <div class="foot">Permintaan Data Daerah AMPK · Provinsi<br>Rehsos Anak Selalu Ada Untuk Anak</div>
   </div>
-  <iframe
-    id="app"
-    title="Aplikasi Permintaan Data Daerah AMPK Provinsi"
-    src="https://script.google.com/macros/s/AKfycby4sXvTRzx67dAJdBCL7PLVRaacjGKcyFKO2X-DIp63jI-6LZQMh7acbVyIniIdUucZlA/exec"
-    allow="clipboard-read; clipboard-write"
-    referrerpolicy="strict-origin-when-cross-origin"
-    onload="document.getElementById('loading').style.display='none'">
-  </iframe>
-  <noscript>Aktifkan JavaScript pada browser untuk menggunakan aplikasi ini.</noscript>
+</section>
+
+<iframe class="app-frame" id="appFrame" title="Aplikasi Permintaan Data Daerah AMPK Provinsi" src="https://script.google.com/macros/s/AKfycby4sXvTRzx67dAJdBCL7PLVRaacjGKcyFKO2X-DIp63jI-6LZQMh7acbVyIniIdUucZlA/exec" allow="clipboard-read; clipboard-write" loading="eager"></iframe>
+
+<section class="fallback" id="fallback">
+  <div class="fallback-card">
+    <h2>Aplikasi belum terbuka</h2>
+    <p>Halaman masih belum merespons. Coba muat ulang atau buka aplikasi langsung di tab baru.</p>
+    <button class="btn" onclick="location.reload()">Coba Lagi</button>
+    <p><a href="https://script.google.com/macros/s/AKfycby4sXvTRzx67dAJdBCL7PLVRaacjGKcyFKO2X-DIp63jI-6LZQMh7acbVyIniIdUucZlA/exec" target="_blank" rel="noopener">Buka aplikasi langsung</a></p>
+  </div>
+</section>
+<script>
+  const loading = document.getElementById('loading');
+  const frame = document.getElementById('appFrame');
+  const fallback = document.getElementById('fallback');
+  let loaded = false;
+  frame.addEventListener('load', () => {
+    loaded = true;
+    loading.classList.add('hide');
+    setTimeout(() => { loading.style.display = 'none'; }, 400);
+  });
+  setTimeout(() => {
+    if (!loaded) {
+      loading.classList.add('hide');
+      setTimeout(() => {
+        loading.style.display = 'none';
+        fallback.style.display = 'flex';
+      }, 400);
+    }
+  }, 18000);
+</script>
 </body>
 </html>
