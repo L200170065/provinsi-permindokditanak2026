@@ -33,10 +33,12 @@ function getRegencies(provinceId) {
 
 function doGet(e) {
   const t = HtmlService.createTemplateFromFile('Index');
-  t.view = 'user'; // Fokus sementara pada laman pengguna; admin ditangani terpisah nanti.
+  t.view = 'user';
+
   return t.evaluate()
     .setTitle('Permintaan Data Daerah | Rehabilitasi Sosial Anak')
-    .addMetaTag('viewport', 'width=device-width, initial-scale=1');
+    .addMetaTag('viewport', 'width=device-width, initial-scale=1')
+    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
 
 function include(filename) {
